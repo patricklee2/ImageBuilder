@@ -21,3 +21,5 @@
 10.10,debian-9
 10.12,debian-9
 10.14,debian-9
+10.16,debian-9
+12.12,debian-9
