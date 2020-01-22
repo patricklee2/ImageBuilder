@@ -20,17 +20,17 @@ declare -r ACR_BUILD_IMAGES_ARTIFACTS_FILE="$SYSTEM_ARTIFACTS_DIR/builtImages.tx
 function buildDockerImage() 
 {
     if [ -f "$CONFIG_DIR/${STACK}VersionTemplateMap.txt" ]; then
-        while IFS=, read -r STACK_VERSION STACK_VERSION_TEMPLATE_DIR STACK_TAGS || [[ -n $STACK_VERSION ]] || [[ -n $STACK_VERSION_TEMPLATE_DIR ]] || [[ -n $STACK_TAGS ]]
+	    while IFS=, read -r STACK_VERSION BASE_IMAGE STACK_VERSION_TEMPLATE_DIR STACK_TAGS || [[ -n $STACK_VERSION ]] || [[ -n $BASE_IMAGE ]] || [[ -n $STACK_VERSION_TEMPLATE_DIR ]] || [[ -n $STACK_TAGS ]]
         do
             echo "Stack Tag is ${STACK_TAGS}"
             IFS='|' read -ra STACK_TAGS_ARR <<< "$STACK_TAGS"
             for TAG in "${STACK_TAGS_ARR[@]}"
             do
                 # Build Image Tags are converted to lower case because docker doesn't accept upper case tags
-                local buildImageTagUpperCaseDocker="${APP_SVC_BRANCH_PREFIX}/${STACK}:${TAG}"
-                local buildImageTagDocker="${buildImageTagUpperCaseDocker,,}"
-                local buildImageTagUpperCase="${TEST_IMAGE_REPO_NAME}/${STACK}:${TAG}_${PIPELINE_BUILD_NUMBER}"
-                local buildImageTag="${buildImageTagUpperCase,,}"
+                local AppSvcTagUpperCaseDocker="${APP_SVC_BRANCH_PREFIX}/${STACK}:${TAG}"
+                local AppSvcTagDocker="${AppSvcTagUpperCaseDocker,,}"
+                local TestRepoTagUpperCase="${TEST_IMAGE_REPO_NAME}/${STACK}:${TAG}_${PIPELINE_BUILD_NUMBER}"
+                local TestRepoTag="${TestRepoTagUpperCase,,}"
                 local appSvcDockerfilePath="${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/${STACK_VERSION}/Dockerfile" 
                 echo "Listing artifacts dir"
                 ls "${SYSTEM_ARTIFACTS_DIR}"
@@ -38,19 +38,19 @@ function buildDockerImage()
                 ls "${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/${STACK_VERSION}"
                 cd "${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/${STACK_VERSION}"
                 echo
-                echo "Building test image with tag '$buildImageTag' and file $appSvcDockerfilePath..."
-                echo docker build -t "$buildImageTag" -f "$appSvcDockerfilePath" .
-                docker build -t "$buildImageTag" -f "$appSvcDockerfilePath" .
-                docker push $buildImageTag
-                echo $buildImageTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
-                echo "Pushing test image to $buildImageTagDocker"
-                docker tag $buildImageTag $buildImageTagDocker
-                docker push $buildImageTagDocker
+                echo "Building test image with tag '$TestRepoTag' and file $appSvcDockerfilePath..."
+                echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
+                docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
+                docker push $TestRepoTag
+                echo $TestRepoTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
+                echo "Pushing test image to $AppSvcTagDocker"
+                docker tag $TestRepoTag $AppSvcTagDocker
+                docker push $AppSvcTagDocker
             done
         done < "$CONFIG_DIR/${STACK}VersionTemplateMap.txt"
     else
-        local buildImageTagUpperCase="${TEST_IMAGE_REPO_NAME}/${STACK}:${PIPELINE_BUILD_NUMBER}"
-        local buildImageTag="${buildImageTagUpperCase,,}"
+        local TestRepoTagUpperCase="${TEST_IMAGE_REPO_NAME}/${STACK}:${PIPELINE_BUILD_NUMBER}"
+        local TestRepoTag="${TestRepoTagUpperCase,,}"
         local appSvcDockerfilePath="${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/kudu/Dockerfile" 
         echo "Listing artifacts dir"
         ls "${SYSTEM_ARTIFACTS_DIR}"
@@ -58,11 +58,11 @@ function buildDockerImage()
         ls "${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/kudu"
         cd "${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/kudu"
         echo
-        echo "Building test image with tag '$buildImageTag' and file $appSvcDockerfilePath..."
-        echo docker build -t "$buildImageTag" -f "$appSvcDockerfilePath" .
-        docker build -t "$buildImageTag" -f "$appSvcDockerfilePath" .
-        docker push $buildImageTag
-        echo $buildImageTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
+        echo "Building test image with tag '$TestRepoTag' and file $appSvcDockerfilePath..."
+        echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
+        docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
+        docker push $TestRepoTag
+        echo $TestRepoTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
     fi
 }
 
