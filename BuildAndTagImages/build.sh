@@ -14,6 +14,7 @@ declare -r APP_SVC_BRANCH_PREFIX="$2"           # appsvc, appsvctest
 declare -r CONFIG_DIR="$3"
 declare -r PIPELINE_BUILD_NUMBER="$4"
 declare -r STACK="$5"
+declare -r BUILD_REASON="$6"
 declare -r TEST_IMAGE_REPO_NAME="appsvcdevacr.azurecr.io"
 declare -r ACR_BUILD_IMAGES_ARTIFACTS_FILE="$SYSTEM_ARTIFACTS_DIR/builtImages.txt"
 
@@ -41,11 +42,15 @@ function buildDockerImage()
                 echo "Building test image with tag '$TestRepoTag' and file $appSvcDockerfilePath..."
                 echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
                 docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
-                docker push $TestRepoTag
+                if [ "$BUILD_REASON" != "PullRequest" ]; then
+                    docker push $TestRepoTag
+                fi
                 echo $TestRepoTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
                 echo "Pushing test image to $AppSvcTagDocker"
                 docker tag $TestRepoTag $AppSvcTagDocker
-                docker push $AppSvcTagDocker
+                if [ "$BUILD_REASON" != "PullRequest" ]; then
+                    docker push $AppSvcTagDocker
+                fi
             done
         done < "$CONFIG_DIR/${STACK}VersionTemplateMap.txt"
     else
@@ -61,7 +66,9 @@ function buildDockerImage()
         echo "Building test image with tag '$TestRepoTag' and file $appSvcDockerfilePath..."
         echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
         docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
-        docker push $TestRepoTag
+        if [ "$BUILD_REASON" != "PullRequest" ]; then
+            docker push $TestRepoTag
+        fi
         echo $TestRepoTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
     fi
 }
