@@ -67,6 +67,12 @@ if [ "$APPSVC_REMOTE_DEBUGGING" == "TRUE" ]; then
     oryxArgs="$debugArgs $oryxArgs"
 fi
 
+customerStartScript="$appPath/startup.sh"
+if [ -f "$customerStartScript" ]; then
+    echo "running customer startup script"
+    eval $customerStartScript
+fi
+
 echo "Launching oryx with: $oryxArgs"
 #invoke oryx to generate startup script
 eval "oryx $oryxArgs"

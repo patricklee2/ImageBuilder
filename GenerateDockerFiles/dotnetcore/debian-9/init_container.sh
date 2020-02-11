@@ -48,6 +48,12 @@ fi
 oryxArgs="-appPath $appPath -output $startupCommandPath -defaultAppFilePath $defaultAppPath \
     -bindPort $PORT -userStartupCommand '$userStartupCommand' $runFromPathArg"
 
+customerStartScript="$appPath/startup.sh"
+if [ -f "$customerStartScript" ]; then
+    echo "running customer startup script"
+    eval $customerStartScript
+fi
+
 echo "Running oryx $oryxArgs"
 eval oryx $oryxArgs
 $startupCommandPath

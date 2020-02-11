@@ -28,7 +28,8 @@ sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 /usr/sbin/sshd
 
 STARTUP_COMMAND_PATH="/opt/startup/startup.sh"
-ORYX_ARGS="-appPath /home/site/wwwroot -output $STARTUP_COMMAND_PATH -usePM2 -defaultApp=/opt/startup/default-static-site.js -userStartupCommand '$@'"
+appPath="/home/site/wwwroot"
+ORYX_ARGS="-appPath $appPath -output $STARTUP_COMMAND_PATH -usePM2 -defaultApp=/opt/startup/default-static-site.js -userStartupCommand '$@'"
 
 if [[ $APPSVC_REMOTE_DEBUGGING == "TRUE" ]]; then
     ORYX_ARGS="-remoteDebug -debugPort $APPSVC_TUNNEL_PORT $ORYX_ARGS"
@@ -42,6 +43,12 @@ if [ -f "oryx-manifest.toml" ] && [[ "$APPSVC_RUN_ZIP" == "TRUE" ]]; then
     echo 'Fixing up path'
     export PATH=/node_modules/.bin:$PATH
     echo "$PATH"
+fi
+
+customerStartScript="$appPath/startup.sh"
+if [ -f "$customerStartScript" ]; then
+    echo "running customer startup script"
+    eval $customerStartScript
 fi
 
 eval oryx $ORYX_ARGS
