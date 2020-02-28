@@ -1,0 +1,11 @@
+steps:
+
+- task: Bash@3
+  inputs:
+    filePath: Tests/SetupTests.sh
+    arguments: $(Build.BuildNumber)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: 'Tests/XUnitTestProject1.csproj'

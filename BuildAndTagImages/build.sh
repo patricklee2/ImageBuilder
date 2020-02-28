@@ -31,8 +31,8 @@ function buildDockerImage()
                 local TestRepoTagUpperCase="${TEST_IMAGE_REPO_NAME}/${STACK}:${TAG}_${PIPELINE_BUILD_NUMBER}"
                 local TestRepoTag="${TestRepoTagUpperCase,,}"
                 local appSvcDockerfilePath="${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/${STACK_VERSION}/Dockerfile" 
-                
-		echo "Listing artifacts dir"
+
+                echo "Listing artifacts dir"
                 ls "${SYSTEM_ARTIFACTS_DIR}"
                 echo "Listing stacks dir"
                 ls "${SYSTEM_ARTIFACTS_DIR}/${STACK}/GitRepo/${STACK_VERSION}"
@@ -43,9 +43,14 @@ function buildDockerImage()
                 echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
                 docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
 
-                if [ "$BUILD_REASON" != "PullRequest" ]; then
-                    docker push $TestRepoTag
-                fi
+                # if [ "$BUILD_REASON" != "PullRequest" ]; then
+                #     docker push $TestRepoTag
+                # fi
+
+                # push to appsvctest for testing
+                local AppsvctestRepoTag="appsvctestlinuxci/${STACK}:${TAG}_${PIPELINE_BUILD_NUMBER}"
+                docker tag $TestRepoTag $AppsvctestRepoTag
+                docker push $AppsvctestRepoTag
 
                 echo $TestRepoTag > $SYSTEM_ARTIFACTS_DIR/builtImageList
             done
@@ -64,8 +69,12 @@ function buildDockerImage()
         echo "Building test image with tag '$TestRepoTag' and file $appSvcDockerfilePath..."
         echo docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
         docker build -t "$TestRepoTag" -f "$appSvcDockerfilePath" .
+<<<<<<< HEAD
 	
 	# only push the images if merging to the master
+=======
+        # only push the images if merging to the master
+>>>>>>> 7fca517... add tests
         if [ "$BUILD_REASON" != "PullRequest" ]; then
             docker push $TestRepoTag
         fi

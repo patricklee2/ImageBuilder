@@ -1,6 +1,6 @@
 parameters:
-  ascName: AppSvcDevACR
-  acrName: appsvcdevacr.azurecr.io
+  appsvctestlinuxci: "appsvctestlinuxci"
+
   stackName: ""
 
 steps:
@@ -13,12 +13,11 @@ steps:
     fi
   displayName: 'Validate pipeline run'
 
-- task: Docker@1
+- task: Docker@2
   displayName: Container registry login
   inputs:
     command: login
-    azureSubscriptionEndpoint: ${{ parameters.ascName }}
-    azureContainerRegistry: ${{ parameters.acrName }}
+    containerRegistry: ${{ parameters.appsvctestlinuxci }}
 
 - task: DownloadBuildArtifacts@0
   displayName: 'Download Build Artifacts'
