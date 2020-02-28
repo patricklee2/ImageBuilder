@@ -2,9 +2,6 @@ resources:
 - repo: self
   fetchDepth: 15
 
-variables:
-- group: AppServiceLinux
-
 schedules:
 - cron: "0 0 * * *"
   displayName: Daily midnight build
