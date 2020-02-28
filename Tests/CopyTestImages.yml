@@ -1,0 +1,18 @@
+parameters:
+  ascName: AppSvcDevACR
+  acrName: appsvcdevacr.azurecr.io
+  stackName: ""
+
+steps:
+- task: Docker@1
+  displayName: Container registry login
+  inputs:
+    command: login
+    azureSubscriptionEndpoint: ${{ parameters.ascName }}
+    azureContainerRegistry: ${{ parameters.acrName }}
+
+- task: ShellScript@2
+  displayName: 'copy images to appsvctest'
+  inputs:
+    scriptPath: ./Tests/copyImages.sh
+    args: $(Build.ArtifactStagingDirectory)/drop appsvctest $(System.DefaultWorkingDirectory)/Config $(Build.BuildNumber) ${{ parameters.stackName }} $(Build.Reason)

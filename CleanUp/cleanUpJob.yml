@@ -3,8 +3,7 @@ steps:
   displayName: Container registry login
   inputs:
     command: login
-    azureSubscriptionEndpoint: AppSvcDevACR
-    azureContainerRegistry: appsvcdevacr.azurecr.io
+
 - task: AzureCLI@2
   displayName: Cleaning Up Dev ACR Repo - Removing old images
   inputs:
