@@ -171,7 +171,7 @@ namespace Tests
 
                     tryNumber = 4;
                 }
-                catch (AssertFailedException ex)
+                catch (Exception ex)
                 {
                     tryNumber = maxTries + 1;
                 }
