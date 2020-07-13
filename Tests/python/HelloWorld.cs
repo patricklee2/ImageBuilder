@@ -84,7 +84,12 @@ namespace Tests
 
                         await CleanupContainer(client, name);
                         tryNumber = maxTries + 1;
+
                     }
+                }
+                catch (Exception ex)
+                {
+                    // noop
                 }
                 finally
                 {
