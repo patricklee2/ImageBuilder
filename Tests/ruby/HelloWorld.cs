@@ -83,12 +83,12 @@ namespace Tests
                         Assert.Equal(expected, html);
 
                         await CleanupContainer(client, name);
-                        tryNumber = 4;
+                        tryNumber = maxTries + 1;
                     }
                 }
                 catch (Exception ex)
                 {
-                    tryNumber = maxTries + 1;
+                    // no-op
                 }
                 finally
                 {
@@ -102,13 +102,20 @@ namespace Tests
              return File.ReadLines(filename);
         }
 
-
         [Fact]
         public async Task Ruby_Stretch_2_6_2Tests()
         {
             List<string> images = GetImages("rubybuiltImageList").ToList();
             string image = images.Find((string s) => s.Contains("ruby:stretch-2.6.2_"));
             await TestImages("ruby", "app/2.6.2", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
+        }
+
+        [Fact]
+        public async Task Ruby_Stretch_2_5_5Tests()
+        {
+            List<string> images = GetImages("rubybuiltImageList").ToList();
+            string image = images.Find((string s) => s.Contains("ruby:stretch-2.5.5_"));
+            await TestImages("ruby", "app/2.5.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
         }
 
         [Fact]

@@ -169,11 +169,11 @@ namespace Tests
                         Directory.Delete($"{appDir}/wwwroot", true);
                     }
 
-                    tryNumber = 4;
+                    tryNumber = maxTries + 1;
                 }
                 catch (Exception ex)
                 {
-                    tryNumber = maxTries + 1;
+                    // noop
                 }
                 finally
                 {
