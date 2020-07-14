@@ -84,11 +84,15 @@ namespace Tests
 
                         await CleanupContainer(client, name);
                         tryNumber = maxTries + 1;
+                        Console.WriteLine("pass");
                     }
                 }
                 catch (Exception ex)
                 {
-                    // no-op
+                    Console.WriteLine(ex.ToString());
+                    if (tryNumber == maxTries+1){
+                        throw ex;
+                    }
                 }
                 finally
                 {
@@ -107,7 +111,7 @@ namespace Tests
         {
             List<string> images = GetImages("rubybuiltImageList").ToList();
             string image = images.Find((string s) => s.Contains("ruby:stretch-2.6.2_"));
-            await TestImages("ruby", "app/2.6.2", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
+            await TestImages("ruby", "app/deb9/2.6.2", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
         }
 
         [Fact]
@@ -115,7 +119,7 @@ namespace Tests
         {
             List<string> images = GetImages("rubybuiltImageList").ToList();
             string image = images.Find((string s) => s.Contains("ruby:stretch-2.5.5_"));
-            await TestImages("ruby", "app/2.5.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
+            await TestImages("ruby", "app/deb9/2.5.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
         }
 
         [Fact]
@@ -123,7 +127,7 @@ namespace Tests
         {
             List<string> images = GetImages("rubybuiltImageList").ToList();
             string image = images.Find((string s) => s.Contains("ruby:2.6.2_"));
-            await TestImages("ruby", "app/2.6.2", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
+            await TestImages("ruby", "app/deb8/2.6.2", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
         }
 
         [Fact]
@@ -131,15 +135,7 @@ namespace Tests
         {
             List<string> images = GetImages("rubybuiltImageList").ToList();
             string image = images.Find((string s) => s.Contains("ruby:2.5.5_"));
-            await TestImages("ruby", "app/2.5.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
-        }
-
-        [Fact]
-        public async Task Ruby2_4_5Tests()
-        {
-            List<string> images = GetImages("rubybuiltImageList").ToList();
-            string image = images.Find((string s) => s.Contains("ruby:2.4.5_"));
-            await TestImages("ruby", "app/2.4.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
+            await TestImages("ruby", "app/deb8/2.5.5", new List<string>{image}, "Hello, world from Azure App Service on Linux!", "8080");
         }
     }
 }
